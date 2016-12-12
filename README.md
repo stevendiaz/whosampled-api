@@ -8,17 +8,22 @@ The response would look something like this
 ```
 {
   song: "Father Stretch My Hands Pt. 1",
-  artist: "Kanye West",
+  artists: ["Kanye West"],
   year: 2016,
   contains_samples: [
     {
       song: "Father I Stretch My Hands",
-      artist: "Pastor T. L. Barrett"
+      artists: [
+        "Pastor T. L. Barrett"
+      ]
       year: 1976
     },
     {
-      song: "Jumpman"
-      artist: "Drake & Future"
+      song: "Jumpman",
+      artists: [ 
+        "Drake", 
+        "Future"
+      ],
       year: 2015
     }
   ]
