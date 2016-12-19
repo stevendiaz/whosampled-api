@@ -12,7 +12,7 @@ require 'nokogiri'
 #       next_is_song = true
 #   elsif next_is_song:
 #       curr_record['song'] = line
-#       next_is_artist = false
+#       next_is_song = false
 #   else
 #       curr_record['artist'].append(line)
 #       next_is_song = false
