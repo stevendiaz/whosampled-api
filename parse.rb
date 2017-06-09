@@ -20,7 +20,7 @@ require 'nokogiri'
 
 def parse_section(section)
     a_tags = section.css('a')
-    # songs are in an array separated by blanks 
+    # songs are in an array separated by blanks
     # the first entry after the blank will be the song name
     # the following entries will be artists
     result_json = []
@@ -35,6 +35,7 @@ def parse_section(section)
             song = a_tag.text
         else
             artist = a_tag.text
+        end
     end
     return a_tags.length
 end
@@ -45,11 +46,9 @@ if __FILE__ == $0
     puts parse_section(html_doc)
     as = html_doc.css('a')
     for a in as do
-        if a.text == '' 
+        if a.text == ''
             puts "blankerino"
-        else 
-            puts a.text 
+        else puts a.text
         end
     end
 end
-    
