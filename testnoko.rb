@@ -11,24 +11,32 @@ def parse_section(as)
   end
 end
 
-
 page = Nokogiri::HTML(File.open("html/father-stretch.html"))
 # Sampled in
+
+def parse_contains(section)
+  result = []
+  section.css('a.trackName.playIcon').each_with_index do |item, index|
+    author = section.css('span.trackArtist')[index].text
+    song = item.text
+    result.push([song, author])
+  end
+  result.each do |pair|
+    puts '%s by %s' % [pair[0], pair[1]]
+  end
+end
 
 for i in page.css('section') do
   if i.css('header').css('span').text.match(/^Contains/) or i.css('header').css('span').text.match(/^Was/) then
     text = i.css('header').css('span').text
     if text.match(/^Contains/) then
       puts 'Contains: '
-      for j in i.css('a.trackName.playIcon') do
-        puts j.text
-      end
+      parse_contains(i)
     end
+
     if text.match(/^Was/) then
       puts 'Was sampled: '
-      for j in i.css('a.trackName.playIcon') do
-        puts j.text
-      end
+      parse_contains(i)
     end
   end
 end
