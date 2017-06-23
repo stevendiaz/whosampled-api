@@ -1,35 +1,25 @@
 require 'nokogiri'
 require 'open-uri'
+WHOSAMPLED_BASE = 'http://www.whosampled.com'
 
-def parse_section(as)
-  for a in as do
-    if a.text == ''
-      puts "blank"
-    else
-      puts a.text
+def get_query_endpoint()
+  print 'Select a song to search: '
+  query = gets
+  query_endpoint = query.gsub(' ', '+')
+  search_endpoint = WHOSAMPLED_BASE + '/search/?q=' + query_endpoint
+end
+
+def get_samples_endpoint(search_endpoint)
+  page = Nokogiri::HTML(open(search_endpoint))
+  node = page.root
+  route = ''
+  node.css('div').each do |i|
+    i.css('a.trackTitle').to_a.each do |item|
+      route = item['href']
     end
   end
+  WHOSAMPLED_BASE + route
 end
-
-
-print 'Select a song to search: '
-query = gets
-query_endpoint = query.gsub(' ', '+')
-search_endpoint = 'http://www.whosampled.com/search/?q=' + query_endpoint
-query_page = Nokogiri::HTML(open(search_endpoint))
-
-# Get link
-node = query_page.root
-
-route = ''
-for i in node.css('div') do
-  i.css('a.trackTitle').to_a.each do |item|
-    route = item['href']
-  end
-end
-
-link = 'http://www.whosampled.com' + route
-page = Nokogiri::HTML(open(link))
 
 def parse_contains(section)
   result = []
@@ -45,18 +35,35 @@ def parse_contains(section)
   puts ''
 end
 
-for i in page.css('section') do
-  if i.css('header').css('span').text.match(/^Contains/) or i.css('header').css('span').text.match(/^Was/) then
-    text = i.css('header').css('span').text
-    if text.match(/^Contains/) then
-      puts 'Contains: '
-      parse_contains(i)
-    end
+def parse_samples(samples_endpoint)
+  page = Nokogiri::HTML(open(samples_endpoint))
+  for i in page.css('section') do
+    if i.css('header').css('span').text.match(/^Contains/) or i.css('header').css('span').text.match(/^Was/) then
+      text = i.css('header').css('span').text
+      if text.match(/^Contains/) then
+        puts 'Contains: '
+        parse_contains(i)
+      end
 
-    if text.match(/^Was/) then
-      puts 'Was sampled: '
-      parse_contains(i)
+      if text.match(/^Was/) then
+        puts 'Was sampled: '
+        parse_contains(i)
+      end
     end
   end
+end
+
+def retry_prompt()
+  print 'Would you like to keep searching? (Y/N):'
+  answer = gets
+  answer.chomp.downcase == 'y'
+end
+
+continue = true
+while continue do
+  query = get_query_endpoint()
+  samples = get_samples_endpoint(query)
+  parse_samples(samples)
+  continue = retry_prompt()
 end
 
