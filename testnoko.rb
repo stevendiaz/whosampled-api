@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'open-uri'
 
 def parse_section(as)
   for a in as do
@@ -10,7 +11,25 @@ def parse_section(as)
   end
 end
 
-page = Nokogiri::HTML(File.open("html/father-stretch.html"))
+
+print 'Select a song to search: '
+query = gets
+query_endpoint = query.gsub(' ', '+')
+search_endpoint = 'http://www.whosampled.com/search/?q=' + query_endpoint
+query_page = Nokogiri::HTML(open(search_endpoint))
+
+# Get link
+node = query_page.root
+
+route = ''
+for i in node.css('div') do
+  i.css('a.trackTitle').to_a.each do |item|
+    route = item['href']
+  end
+end
+
+link = 'http://www.whosampled.com' + route
+page = Nokogiri::HTML(open(link))
 
 def parse_contains(section)
   result = []
@@ -41,12 +60,3 @@ for i in page.css('section') do
   end
 end
 
-#for i in page.css('a.trackName.playIcon') do
-#  puts i.text
-#end
-
-#for i in page.css('span.trackArtist').css('a') do
-#  puts i.text
-#end
-#puts page.css('a.trackName.playIcon').text
-#parse_section(page.css('a'))
