@@ -1,6 +1,5 @@
 require 'nokogiri'
 
-
 def parse_section(as)
   for a in as do
     if a.text == ''
@@ -11,8 +10,7 @@ def parse_section(as)
   end
 end
 
-page = Nokogiri::HTML(File.open("html/paris.html"))
-# Sampled in
+page = Nokogiri::HTML(File.open("html/father-stretch.html"))
 
 def parse_contains(section)
   result = []
@@ -22,8 +20,10 @@ def parse_contains(section)
     result.push([song, author])
   end
   result.each do |pair|
-    puts '%s by %s' % [pair[0], pair[1]]
+    output = '%s by %s' % [pair[0], pair[1]]
+    puts output[0...-2]
   end
+  puts ''
 end
 
 for i in page.css('section') do
